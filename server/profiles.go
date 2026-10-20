@@ -78,6 +78,7 @@ func handleUpdateProfile(w http.ResponseWriter, r *http.Request, user *User) {
 
 	body.Skills = tidyList(body.Skills)
 	body.Interests = tidyList(body.Interests)
+	body.Bio, _ = moderate(body.Bio)
 
 	_, err := db.Exec(`
 		INSERT INTO profiles (user_id, college, branch, graduation_year, company,
