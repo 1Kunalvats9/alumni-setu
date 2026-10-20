@@ -15,6 +15,8 @@
 - [x] Content moderation filter on all user text
 - [x] Job / placement board
 - [x] Electron desktop UI for all of the above
+- [x] Demo seed data
+- [x] Unit tests for the moderation filter
 
 ## Next
 

@@ -106,7 +106,34 @@ npm start
 
 ---
 
-## Status
+## What is built
 
-This is an in-progress build. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for what is
-done and what is next.
+| Feature | Status |
+| --- | --- |
+| Accounts with roles (student / alumni / admin), bcrypt passwords, token sessions | Done |
+| Centralized alumni database: batch, branch, employer, role, industry, skills | Done |
+| Directory with free-text search and branch / batch / role / mentor filters | Done |
+| Suggested connections with an explainable match score | Done |
+| Mentorship requests (send, accept, reject) | Done |
+| Events: meetups, webinars, panels, with RSVP | Done |
+| Discussion forum with threads and replies | Done |
+| Harmful-content filter on profiles, posts, comments and job descriptions | Done |
+| Placement board for alumni-posted jobs and internships | Done |
+| Electron desktop UI for all of the above | Done |
+| AI chatbot, NLP skill extraction, blockchain verification, admin console | Not yet |
+
+Roughly a third of the full platform, working end to end from SQL to screen.
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the rest.
+
+## Documentation
+
+- [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md) — how the code works, written to be explained out loud
+- [`docs/API.md`](docs/API.md) — every endpoint, its body and who may call it
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — done and not done
+
+## Tests
+
+```bash
+cd server
+go test ./...
+```
