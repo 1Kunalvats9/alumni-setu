@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; style-src 'self'; script-src 'self'; connect-src http://localhost:8080" />
+    <title>AlumniSetu</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="screen-login" class="login-screen">
+      <div class="login-card">
+        <div class="brand">
+          <div class="brand-mark">AS</div>
+          <div>
+            <h1>AlumniSetu</h1>
+            <p>Alumni &amp; Student Platform<br />Technical Education Department, Govt. of Rajasthan</p>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button id="tab-login" class="tab active">Sign in</button>
+          <button id="tab-register" class="tab">Create account</button>
+        </div>
+
+        <form id="form-login" class="form">
+          <label>Email<input type="email" name="email" value="riya@student.ac.in" required /></label>
+          <label>Password<input type="password" name="password" value="password123" required /></label>
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+
+        <form id="form-register" class="form hidden">
+          <label>Full name<input type="text" name="name" required /></label>
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Password<input type="password" name="password" minlength="8" required /></label>
+          <label>I am a
+            <select name="role">
+              <option value="student">Student</option>
+              <option value="alumni">Alumnus / Alumna</option>
+            </select>
+          </label>
+          <button type="submit" class="btn btn-primary">Create account</button>
+        </form>
+
+        <p id="login-error" class="error hidden"></p>
+        <p class="hint">Demo accounts use the password <code>password123</code></p>
+      </div>
+    </div>
+
+    <div id="screen-app" class="app hidden">
+      <aside class="sidebar">
+        <div class="brand small">
+          <div class="brand-mark">AS</div>
+          <h1>AlumniSetu</h1>
+        </div>
+
+        <nav id="nav"></nav>
+
+        <div class="sidebar-footer">
+          <div id="current-user" class="current-user"></div>
+          <button id="btn-logout" class="btn btn-ghost">Sign out</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="page-header">
+          <h2 id="page-title">Home</h2>
+        </header>
+        <div id="page"></div>
+      </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/pages/home.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "alumnisetu-desktop",
+  "version": "0.1.0",
+  "description": "AlumniSetu desktop client for the Alumni-Student Interaction Platform",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "33.2.1"
+  }
+}
