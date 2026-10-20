@@ -42,6 +42,10 @@ func main() {
 	mux.HandleFunc("DELETE /api/posts/{id}", requireAuth(handleDeletePost))
 	mux.HandleFunc("POST /api/posts/{id}/comments", requireAuth(handleCreateComment))
 
+	mux.HandleFunc("GET /api/jobs", requireAuth(handleListJobs))
+	mux.HandleFunc("POST /api/jobs", requireRole([]string{"alumni", "admin"}, handleCreateJob))
+	mux.HandleFunc("DELETE /api/jobs/{id}", requireAuth(handleDeleteJob))
+
 	log.Println("AlumniSetu API listening on http://" + addr)
 	if err := http.ListenAndServe(addr, withCORS(mux)); err != nil {
 		log.Fatal(err)
