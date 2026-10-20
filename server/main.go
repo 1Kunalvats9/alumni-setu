@@ -36,6 +36,9 @@ func main() {
 	mux.HandleFunc("GET /api/directory", requireAuth(handleDirectory))
 	mux.HandleFunc("GET /api/directory/filters", requireAuth(handleFilterOptions))
 
+	// --- Suggested connections -------------------------------------------
+	mux.HandleFunc("GET /api/recommendations", requireAuth(handleRecommendations))
+
 	log.Println("AlumniSetu API listening on http://" + addr)
 	if err := http.ListenAndServe(addr, withCORS(mux)); err != nil {
 		log.Fatal(err)

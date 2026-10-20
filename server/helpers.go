@@ -53,16 +53,20 @@ func splitList(csv string) []string {
 	return out
 }
 
-// overlap returns the values that appear in both lists.
-func overlap(a, b []string) []string {
-	inB := make(map[string]bool, len(b))
-	for _, v := range b {
-		inB[v] = true
+// sharedItems returns the entries that appear in both comma separated lists.
+// Matching ignores case, but the result keeps the casing from `theirs`, so the
+// UI shows "Machine Learning" rather than "machine learning".
+func sharedItems(mine, theirs string) []string {
+	have := make(map[string]bool)
+	for _, item := range splitList(mine) {
+		have[item] = true
 	}
+
 	var shared []string
-	for _, v := range a {
-		if inB[v] {
-			shared = append(shared, v)
+	for _, original := range strings.Split(theirs, ",") {
+		original = strings.TrimSpace(original)
+		if original != "" && have[strings.ToLower(original)] {
+			shared = append(shared, original)
 		}
 	}
 	return shared
