@@ -1,14 +1,5 @@
 package main
 
-// directory.go — the searchable alumni directory.
-//
-// GET /api/directory?q=google&role=alumni&branch=Computer%20Science&year=2016
-//
-// The handler builds the WHERE clause one condition at a time. Each condition
-// adds a "?" placeholder and its value to a slice, so user input is always
-// passed as a bound parameter and never pasted into the SQL string. That is
-// what makes this safe from SQL injection.
-
 import (
 	"net/http"
 	"strconv"
@@ -18,12 +9,9 @@ import (
 func handleDirectory(w http.ResponseWriter, r *http.Request, _ *User) {
 	query := r.URL.Query()
 
-	// Start with conditions that are always true, then narrow down.
 	where := []string{"1 = 1"}
 	args := []any{}
 
-	// Free text search across the fields a student would actually type into
-	// a search box: name, company, job title, skills, branch.
 	if q := strings.TrimSpace(query.Get("q")); q != "" {
 		like := "%" + strings.ToLower(q) + "%"
 		where = append(where, `(
@@ -37,7 +25,6 @@ func handleDirectory(w http.ResponseWriter, r *http.Request, _ *User) {
 		args = append(args, like, like, like, like, like, like)
 	}
 
-	// Exact-match dropdown filters.
 	addFilter := func(param, column string) {
 		if value := strings.TrimSpace(query.Get(param)); value != "" {
 			where = append(where, "LOWER("+column+") = ?")
@@ -57,16 +44,13 @@ func handleDirectory(w http.ResponseWriter, r *http.Request, _ *User) {
 		}
 	}
 
-	// ?mentor=true shows only alumni who ticked "open to mentoring".
 	if query.Get("mentor") == "true" {
 		where = append(where, "p.open_to_mentor = 1")
 	}
-	// ?verified=true shows only admin-verified accounts.
 	if query.Get("verified") == "true" {
 		where = append(where, "u.verified = 1")
 	}
 
-	// Cap the page size so one request can never pull the whole database.
 	limit := 50
 	if n, err := strconv.Atoi(query.Get("limit")); err == nil && n > 0 && n <= 200 {
 		limit = n
@@ -92,24 +76,14 @@ func handleDirectory(w http.ResponseWriter, r *http.Request, _ *User) {
 	}
 	defer rows.Close()
 
-	// Start as an empty slice, not nil, so an empty result encodes as [] and
-	// not null — the UI can then loop over it without a special case.
 	entries := []DirectoryEntry{}
 	for rows.Next() {
-		var e DirectoryEntry
-		var p Profile
-		err := rows.Scan(
-			&e.ID, &e.Name, &e.Email, &e.Role, &e.Verified, &e.CreatedAt,
-			&p.UserID, &p.College, &p.Branch, &p.GraduationYear, &p.Company,
-			&p.JobTitle, &p.Industry, &p.Location, &p.Skills, &p.Interests,
-			&p.Bio, &p.LinkedIn, &p.OpenToMentor, &p.UpdatedAt,
-		)
+		entry, err := scanDirectoryRow(rows)
 		if err != nil {
 			writeError(w, http.StatusInternalServerError, "could not read results")
 			return
 		}
-		e.Profile = p
-		entries = append(entries, e)
+		entries = append(entries, entry)
 	}
 
 	writeJSON(w, http.StatusOK, map[string]any{
@@ -118,9 +92,19 @@ func handleDirectory(w http.ResponseWriter, r *http.Request, _ *User) {
 	})
 }
 
-// handleFilterOptions feeds the dropdowns in the UI: every branch, industry
-// and batch year that actually exists in the database, so the filters can
-// never offer an option that returns nothing.
+func scanDirectoryRow(row rowScanner) (DirectoryEntry, error) {
+	var e DirectoryEntry
+	var p Profile
+	err := row.Scan(
+		&e.ID, &e.Name, &e.Email, &e.Role, &e.Verified, &e.CreatedAt,
+		&p.UserID, &p.College, &p.Branch, &p.GraduationYear, &p.Company,
+		&p.JobTitle, &p.Industry, &p.Location, &p.Skills, &p.Interests,
+		&p.Bio, &p.LinkedIn, &p.OpenToMentor, &p.UpdatedAt,
+	)
+	e.Profile = p
+	return e, err
+}
+
 func handleFilterOptions(w http.ResponseWriter, r *http.Request, _ *User) {
 	writeJSON(w, http.StatusOK, map[string]any{
 		"branches":   distinctValues("branch"),
@@ -131,9 +115,6 @@ func handleFilterOptions(w http.ResponseWriter, r *http.Request, _ *User) {
 	})
 }
 
-// distinctValues returns every non-empty value of one profile column.
-// The column name is chosen by us in the line above, never by the user, so
-// putting it straight into the SQL text is safe here.
 func distinctValues(column string) []string {
 	rows, err := db.Query(`SELECT DISTINCT ` + column + ` FROM profiles
 		WHERE ` + column + ` != '' AND ` + column + ` != 0

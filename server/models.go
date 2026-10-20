@@ -1,13 +1,5 @@
 package main
 
-// models.go — Go structs that mirror the database tables.
-//
-// The `json:"..."` tags decide the key names the Electron app sees. Keeping
-// them snake_case means the JSON looks exactly like the SQL columns, so there
-// is only one set of names to remember.
-
-// User is a row from the users table. PasswordHash has json:"-" so it is never
-// accidentally sent to the client.
 type User struct {
 	ID        int64  `json:"id"`
 	Name      string `json:"name"`
@@ -18,7 +10,6 @@ type User struct {
 	CreatedAt string `json:"created_at"`
 }
 
-// Profile is a row from the profiles table.
 type Profile struct {
 	UserID         int64  `json:"user_id"`
 	College        string `json:"college"`
@@ -36,23 +27,17 @@ type Profile struct {
 	UpdatedAt      string `json:"updated_at"`
 }
 
-// DirectoryEntry is one person as shown in the alumni directory: their user
-// row and their profile row joined together.
 type DirectoryEntry struct {
 	User
 	Profile Profile `json:"profile"`
 }
 
-// Recommendation is a suggested mentor plus the score that put them there.
-// Reasons is a human readable explanation like ["2 shared skills: Go, React"]
-// so the UI can show *why* a match was suggested instead of a magic number.
 type Recommendation struct {
 	DirectoryEntry
 	Score   int      `json:"score"`
 	Reasons []string `json:"reasons"`
 }
 
-// Event is an alumni meetup, webinar or panel discussion.
 type Event struct {
 	ID          int64  `json:"id"`
 	Title       string `json:"title"`
@@ -68,7 +53,6 @@ type Event struct {
 	IsAttending bool   `json:"is_attending"`
 }
 
-// Post is a discussion forum thread.
 type Post struct {
 	ID           int64  `json:"id"`
 	AuthorID     int64  `json:"author_id"`
@@ -82,7 +66,6 @@ type Post struct {
 	CommentCount int    `json:"comment_count"`
 }
 
-// Comment is a reply on a forum post.
 type Comment struct {
 	ID         int64  `json:"id"`
 	PostID     int64  `json:"post_id"`
@@ -94,7 +77,6 @@ type Comment struct {
 	CreatedAt  string `json:"created_at"`
 }
 
-// Mentorship is a student's request for an alumnus to mentor them.
 type Mentorship struct {
 	ID          int64  `json:"id"`
 	StudentID   int64  `json:"student_id"`
@@ -106,7 +88,6 @@ type Mentorship struct {
 	CreatedAt   string `json:"created_at"`
 }
 
-// Job is a vacancy posted by an alumnus for placement assistance.
 type Job struct {
 	ID          int64  `json:"id"`
 	PostedBy    int64  `json:"posted_by"`
