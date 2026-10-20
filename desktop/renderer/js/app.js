@@ -5,6 +5,9 @@ const state = {
 
 const navItems = [
   { id: "home", label: "Home" },
+  { id: "directory", label: "Alumni Directory" },
+  { id: "mentors", label: "Suggested Mentors" },
+  { id: "profile", label: "My Profile" },
 ];
 
 function showScreen(name) {
@@ -72,6 +75,7 @@ function logout() {
 
 async function boot() {
   setupAuthForms();
+  setupModal();
   document.getElementById("btn-logout").addEventListener("click", logout);
 
   if (!api.token) {

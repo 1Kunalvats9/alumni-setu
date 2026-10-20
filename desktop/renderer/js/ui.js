@@ -70,3 +70,21 @@ function emptyState(message) {
 function loading() {
   return `<div class="empty">Loading...</div>`;
 }
+
+function showModal(title, bodyHtml) {
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-body").innerHTML = bodyHtml;
+  document.getElementById("modal").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.add("hidden");
+  document.getElementById("modal-body").innerHTML = "";
+}
+
+function setupModal() {
+  document.getElementById("modal-close").addEventListener("click", closeModal);
+  document.getElementById("modal").addEventListener("click", (event) => {
+    if (event.target.id === "modal") closeModal();
+  });
+}
