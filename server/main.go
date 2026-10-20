@@ -9,6 +9,7 @@ const addr = "localhost:8080"
 
 func main() {
 	openDB("alumnisetu.db")
+	seedIfEmpty()
 
 	mux := http.NewServeMux()
 
