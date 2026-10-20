@@ -36,6 +36,12 @@ func main() {
 	mux.HandleFunc("POST /api/events/{id}/rsvp", requireAuth(handleRSVP))
 	mux.HandleFunc("DELETE /api/events/{id}/rsvp", requireAuth(handleRSVP))
 
+	mux.HandleFunc("GET /api/posts", requireAuth(handleListPosts))
+	mux.HandleFunc("POST /api/posts", requireAuth(handleCreatePost))
+	mux.HandleFunc("GET /api/posts/{id}", requireAuth(handleGetPost))
+	mux.HandleFunc("DELETE /api/posts/{id}", requireAuth(handleDeletePost))
+	mux.HandleFunc("POST /api/posts/{id}/comments", requireAuth(handleCreateComment))
+
 	log.Println("AlumniSetu API listening on http://" + addr)
 	if err := http.ListenAndServe(addr, withCORS(mux)); err != nil {
 		log.Fatal(err)
