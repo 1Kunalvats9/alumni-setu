@@ -1,0 +1,12 @@
+# Go
+server/bin/
+*.db
+*.db-shm
+*.db-wal
+
+# Node / Electron
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
