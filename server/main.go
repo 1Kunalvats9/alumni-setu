@@ -27,6 +27,10 @@ func main() {
 
 	mux.HandleFunc("GET /api/recommendations", requireAuth(handleRecommendations))
 
+	mux.HandleFunc("POST /api/mentorships", requireRole([]string{"student"}, handleCreateMentorship))
+	mux.HandleFunc("GET /api/mentorships", requireAuth(handleListMentorships))
+	mux.HandleFunc("PATCH /api/mentorships/{id}", requireRole([]string{"alumni"}, handleUpdateMentorship))
+
 	log.Println("AlumniSetu API listening on http://" + addr)
 	if err := http.ListenAndServe(addr, withCORS(mux)); err != nil {
 		log.Fatal(err)
