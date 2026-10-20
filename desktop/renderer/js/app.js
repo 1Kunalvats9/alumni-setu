@@ -7,6 +7,10 @@ const navItems = [
   { id: "home", label: "Home" },
   { id: "directory", label: "Alumni Directory" },
   { id: "mentors", label: "Suggested Mentors" },
+  { id: "mentorships", label: "Mentorship Requests" },
+  { id: "events", label: "Events & Webinars" },
+  { id: "forum", label: "Discussion Forum" },
+  { id: "jobs", label: "Placements" },
   { id: "profile", label: "My Profile" },
 ];
 
