@@ -28,6 +28,10 @@ func main() {
 	mux.HandleFunc("POST /api/logout", requireAuth(handleLogout))
 	mux.HandleFunc("GET /api/me", requireAuth(handleMe))
 
+	// --- Profiles --------------------------------------------------------
+	mux.HandleFunc("PUT /api/me/profile", requireAuth(handleUpdateProfile))
+	mux.HandleFunc("GET /api/users/{id}", requireAuth(handleGetUser))
+
 	log.Println("AlumniSetu API listening on http://" + addr)
 	if err := http.ListenAndServe(addr, withCORS(mux)); err != nil {
 		log.Fatal(err)

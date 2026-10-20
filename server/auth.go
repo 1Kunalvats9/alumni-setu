@@ -213,5 +213,10 @@ func requireRole(roles []string, next authedHandler) http.HandlerFunc {
 // handleMe returns the logged-in user. The desktop app calls this on startup
 // to check whether the saved token is still valid.
 func handleMe(w http.ResponseWriter, r *http.Request, user *User) {
-	writeJSON(w, http.StatusOK, map[string]any{"user": user})
+	profile, err := loadProfile(user.ID)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not load profile")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"user": user, "profile": profile})
 }
