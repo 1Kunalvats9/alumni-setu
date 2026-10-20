@@ -22,6 +22,12 @@ func main() {
 	// --- Health ----------------------------------------------------------
 	mux.HandleFunc("GET /api/health", handleHealth)
 
+	// --- Accounts --------------------------------------------------------
+	mux.HandleFunc("POST /api/register", handleRegister)
+	mux.HandleFunc("POST /api/login", handleLogin)
+	mux.HandleFunc("POST /api/logout", requireAuth(handleLogout))
+	mux.HandleFunc("GET /api/me", requireAuth(handleMe))
+
 	log.Println("AlumniSetu API listening on http://" + addr)
 	if err := http.ListenAndServe(addr, withCORS(mux)); err != nil {
 		log.Fatal(err)
