@@ -42,10 +42,18 @@ func main() {
 	mux.HandleFunc("GET /api/posts/{id}", requireAuth(handleGetPost))
 	mux.HandleFunc("DELETE /api/posts/{id}", requireAuth(handleDeletePost))
 	mux.HandleFunc("POST /api/posts/{id}/comments", requireAuth(handleCreateComment))
+	mux.HandleFunc("DELETE /api/comments/{id}", requireAuth(handleDeleteComment))
 
 	mux.HandleFunc("GET /api/jobs", requireAuth(handleListJobs))
 	mux.HandleFunc("POST /api/jobs", requireRole([]string{"alumni", "admin"}, handleCreateJob))
 	mux.HandleFunc("DELETE /api/jobs/{id}", requireAuth(handleDeleteJob))
+
+	admin := []string{"admin"}
+	mux.HandleFunc("GET /api/admin/stats", requireRole(admin, handleAdminStats))
+	mux.HandleFunc("GET /api/admin/pending", requireRole(admin, handleAdminPending))
+	mux.HandleFunc("PATCH /api/admin/users/{id}/verify", requireRole(admin, handleAdminVerify))
+	mux.HandleFunc("GET /api/admin/flagged", requireRole(admin, handleAdminFlagged))
+	mux.HandleFunc("PATCH /api/admin/posts/{id}/approve", requireRole(admin, handleAdminClearFlag))
 
 	log.Println("AlumniSetu API listening on http://" + addr)
 	if err := http.ListenAndServe(addr, withCORS(mux)); err != nil {

@@ -177,6 +177,27 @@ func handleDeletePost(w http.ResponseWriter, r *http.Request, user *User) {
 	writeJSON(w, http.StatusOK, map[string]string{"status": "deleted"})
 }
 
+func handleDeleteComment(w http.ResponseWriter, r *http.Request, user *User) {
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid comment id")
+		return
+	}
+
+	comment, err := scanComment(db.QueryRow(commentSelect+` WHERE c.id = ?`, id))
+	if err != nil {
+		writeError(w, http.StatusNotFound, "no such comment")
+		return
+	}
+	if comment.AuthorID != user.ID && user.Role != "admin" {
+		writeError(w, http.StatusForbidden, "you can only delete your own comments")
+		return
+	}
+
+	db.Exec(`DELETE FROM comments WHERE id = ?`, id)
+	writeJSON(w, http.StatusOK, map[string]string{"status": "deleted"})
+}
+
 const postSelect = `
 	SELECT p.id, p.author_id, author.name, author.role, p.title, p.body,
 	       p.category, p.flagged, p.created_at,
