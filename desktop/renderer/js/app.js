@@ -11,8 +11,13 @@ const navItems = [
   { id: "events", label: "Events & Webinars" },
   { id: "forum", label: "Discussion Forum" },
   { id: "jobs", label: "Placements" },
+  { id: "admin", label: "Admin Console", roles: ["admin"] },
   { id: "profile", label: "My Profile" },
 ];
+
+function visibleNavItems() {
+  return navItems.filter((item) => !item.roles || item.roles.includes(state.user.role));
+}
 
 function showScreen(name) {
   document.getElementById("screen-login").classList.toggle("hidden", name !== "login");
@@ -21,7 +26,7 @@ function showScreen(name) {
 
 function renderNav() {
   const nav = document.getElementById("nav");
-  nav.innerHTML = navItems
+  nav.innerHTML = visibleNavItems()
     .map((item) => `<button class="nav-item" data-page="${item.id}">${item.label}</button>`)
     .join("");
 
@@ -31,7 +36,8 @@ function renderNav() {
 }
 
 async function openPage(name) {
-  const item = navItems.find((entry) => entry.id === name) || navItems[0];
+  const allowed = visibleNavItems();
+  const item = allowed.find((entry) => entry.id === name) || allowed[0];
 
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.classList.toggle("active", button.dataset.page === item.id);
