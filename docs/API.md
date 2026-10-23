@@ -141,3 +141,43 @@ they are stored; the stored text is the masked version and `flagged` is set.
 | DELETE | `/jobs/{id}` | — | Poster or admin |
 
 `kind` is `full-time` or `internship`.
+
+---
+
+## Help assistant
+
+| Method | Path | Body | Notes |
+| --- | --- | --- | --- |
+| POST | `/assistant` | `question` | Keyword retrieval, not a language model |
+
+Response:
+
+```json
+{
+  "answer": "The next session is \"Careers in Cloud Engineering\" on 15 Nov 2026 at 10:00 UTC. ...",
+  "matched": "events",
+  "page": "events",
+  "suggestions": ["Can I host a session?"]
+}
+```
+
+`matched` is the intent name, empty when nothing matched. `page` is the UI
+page the answer relates to, so the client can offer to navigate there.
+Six intents answer from live database queries rather than canned text.
+
+---
+
+## Admin
+
+Every route below is restricted to the `admin` role and returns `403` otherwise.
+
+| Method | Path | Body | Notes |
+| --- | --- | --- | --- |
+| GET | `/admin/stats` | — | Department-level counts across the platform |
+| GET | `/admin/pending` | — | Alumni awaiting verification, oldest first |
+| PATCH | `/admin/users/{id}/verify` | `verified` | Sets or clears the verified flag. Admin accounts are refused. |
+| GET | `/admin/flagged` | — | Returns `{posts, comments}` the filter marked |
+| PATCH | `/admin/posts/{id}/approve` | — | Clears a false positive |
+
+Admin accounts cannot be created through `/register`; they exist only in the
+seed data.

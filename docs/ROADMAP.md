@@ -17,11 +17,13 @@
 - [x] Electron desktop UI for all of the above
 - [x] Demo seed data
 - [x] Unit tests for the moderation filter
+- [x] Admin console: alumni verification and flagged-content review
+- [x] Department engagement statistics
+- [x] Help assistant for FAQs and navigation
 
 ## Next
 
-- [ ] Admin verification screen for alumni (anti fake-profile)
-- [ ] AI chatbot assistant for navigation + FAQs
+- [ ] Swap the assistant's keyword retrieval for a language model
 - [ ] NLP-based skill extraction from free-text bios
 - [ ] Email / in-app notifications
 - [ ] Blockchain-backed credential verification

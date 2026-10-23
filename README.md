@@ -66,6 +66,8 @@ ad_desktop_app/
 │   ├── forum.go            # posts + comments
 │   ├── jobs.go             # placement / job board
 │   ├── moderation.go       # harmful-content filter
+│   ├── admin.go            # verification, moderation queue, stats
+│   ├── assistant.go        # help assistant
 │   ├── helpers.go          # small JSON + request helpers
 │   └── seed.go             # demo data
 └── desktop/                # Electron app
@@ -119,10 +121,12 @@ npm start
 | Discussion forum with threads and replies | Done |
 | Harmful-content filter on profiles, posts, comments and job descriptions | Done |
 | Placement board for alumni-posted jobs and internships | Done |
+| Admin console: alumni verification, flagged-content review, engagement stats | Done |
+| Help assistant for FAQs and navigating the app | Done |
 | Electron desktop UI for all of the above | Done |
-| AI chatbot, NLP skill extraction, blockchain verification, admin console | Not yet |
+| NLP skill extraction, language-model assistant, blockchain verification | Not yet |
 
-Roughly a third of the full platform, working end to end from SQL to screen.
+Working end to end from SQL to screen.
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the rest.
 
 ## Documentation

@@ -228,3 +228,75 @@ running on port 8080?" instead of a blank screen.
 Roughly a third of the full platform: the database, accounts, directory,
 matching, mentorship, events, forum, moderation and placements, end to end
 from SQL to screen. `docs/ROADMAP.md` lists exactly what is not built yet.
+
+---
+
+## 6. The admin side (`admin.go`)
+
+This is where the fake-profile and harmful-content requirements are actually
+closed out, because a filter only helps if a human acts on what it catches.
+
+Every route is wrapped in `requireRole([]string{"admin"}, ...)`, so a student
+or alumni token gets `403` before the handler ever runs.
+
+| Endpoint | What it does |
+| --- | --- |
+| `/admin/stats` | Counts across accounts, events, forum, placements, mentorships |
+| `/admin/pending` | Alumni whose `verified` flag is still 0 |
+| `/admin/users/{id}/verify` | Flips that flag |
+| `/admin/flagged` | Everything `moderate()` marked |
+| `/admin/posts/{id}/approve` | Clears a false positive |
+
+**The anti-fake-profile answer, in one sentence:** accounts start unverified,
+an admin checks the claimed degree and employer against the profile, and only
+then does the account get a verified badge, rank higher in matching, and pass
+the directory's `verified=true` filter.
+
+One guard worth pointing out: `handleAdminVerify` refuses to touch an account
+whose role is `admin`, so the endpoint cannot be used to tamper with the
+admin accounts themselves.
+
+---
+
+## 7. The help assistant (`assistant.go`)
+
+The problem statement asks for a chatbot. This is **keyword retrieval over a
+knowledge base of 15 intents** — say that plainly rather than calling it AI.
+
+Each intent is a struct with keywords, an answer and the page it relates to:
+
+```go
+{
+    Name:     "find_mentor",
+    Keywords: []string{"mentor", "guidance", "guide", "senior", "advice"},
+    Text:     "Open Suggested Mentors...",
+    Page:     "mentors",
+}
+```
+
+`bestIntent(question)` lowercases the question and scores every intent by how
+many of its keywords appear in it. A multi-word keyword scores its word count,
+so `"host a session"` (3 points) beats a bare `"session"` (1 point) — that is
+how a specific phrase wins over a general one. Highest score wins, and a score
+of zero returns a list of what the assistant can help with instead of guessing.
+
+Six intents set `Live` instead of `Text` — a function that queries the database
+— so "when is the next session" and "do I have pending requests" return the
+real answer for the person asking, not a canned sentence.
+
+**If asked "why not a real LLM?"**: this needs no API key, no network, no cost
+and no risk of inventing an answer about a feature that does not exist. `Live`
+and `Text` are the only two things a model would replace, and it is one
+function. That trade is a reasonable one to defend.
+
+`assistant_test.go` covers 15 phrasings, including two that must *not* match.
+
+---
+
+## 8. Running the tests
+
+```bash
+cd server
+go test ./...     # 25 cases: 10 moderation, 15 assistant intents
+go vet ./...
+```
