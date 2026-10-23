@@ -29,6 +29,14 @@ func now() string {
 	return time.Now().UTC().Format(time.RFC3339)
 }
 
+func prettyTime(value string) string {
+	parsed, err := time.Parse(time.RFC3339, value)
+	if err != nil {
+		return value
+	}
+	return parsed.Format("2 Jan 2006 at 15:04 UTC")
+}
+
 func splitList(csv string) []string {
 	var out []string
 	for _, part := range strings.Split(csv, ",") {

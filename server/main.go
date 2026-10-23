@@ -48,6 +48,8 @@ func main() {
 	mux.HandleFunc("POST /api/jobs", requireRole([]string{"alumni", "admin"}, handleCreateJob))
 	mux.HandleFunc("DELETE /api/jobs/{id}", requireAuth(handleDeleteJob))
 
+	mux.HandleFunc("POST /api/assistant", requireAuth(handleAssistant))
+
 	admin := []string{"admin"}
 	mux.HandleFunc("GET /api/admin/stats", requireRole(admin, handleAdminStats))
 	mux.HandleFunc("GET /api/admin/pending", requireRole(admin, handleAdminPending))
