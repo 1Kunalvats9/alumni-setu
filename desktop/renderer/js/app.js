@@ -22,6 +22,12 @@ function visibleNavItems() {
 function showScreen(name) {
   document.getElementById("screen-login").classList.toggle("hidden", name !== "login");
   document.getElementById("screen-app").classList.toggle("hidden", name !== "app");
+
+  if (name === "login") {
+    document.getElementById("assistant-toggle").classList.add("hidden");
+    document.getElementById("assistant").classList.add("hidden");
+    document.getElementById("assistant-log").innerHTML = "";
+  }
 }
 
 function renderNav() {
@@ -70,6 +76,7 @@ async function startApp() {
   state.profile = me.profile;
 
   showScreen("app");
+  document.getElementById("assistant-toggle").classList.remove("hidden");
   renderNav();
   renderCurrentUser();
   await openPage("home");
@@ -86,6 +93,7 @@ function logout() {
 async function boot() {
   setupAuthForms();
   setupModal();
+  setupAssistant();
   document.getElementById("btn-logout").addEventListener("click", logout);
 
   if (!api.token) {
