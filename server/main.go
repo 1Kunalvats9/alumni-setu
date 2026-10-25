@@ -62,6 +62,7 @@ func main() {
 	mux.HandleFunc("PATCH /api/admin/users/{id}/verify", requireRole(admin, handleAdminVerify))
 	mux.HandleFunc("GET /api/admin/flagged", requireRole(admin, handleAdminFlagged))
 	mux.HandleFunc("GET /api/admin/ledger", requireRole(admin, handleLedger))
+	mux.HandleFunc("GET /api/admin/analytics", requireRole(admin, handleAnalytics))
 	mux.HandleFunc("PATCH /api/admin/posts/{id}/approve", requireRole(admin, handleAdminClearFlag))
 
 	log.Println("AlumniSetu API listening on http://" + addr)

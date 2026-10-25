@@ -12,6 +12,7 @@ const navItems = [
   { id: "forum", label: "Discussion Forum" },
   { id: "jobs", label: "Placements" },
   { id: "admin", label: "Admin Console", roles: ["admin"] },
+  { id: "analytics", label: "Analytics", roles: ["admin"] },
   { id: "profile", label: "My Profile" },
 ];
 
