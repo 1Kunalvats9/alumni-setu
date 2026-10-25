@@ -41,6 +41,14 @@ pages.profile = async function (container) {
         <textarea name="bio">${escapeHtml(p.bio)}</textarea>
       </label>
 
+      <div class="extract">
+        <button type="button" id="btn-extract" class="btn btn-secondary btn-small">
+          Scan my bio for skills
+        </button>
+        <span class="muted">Reads the text above and suggests skills to add.</span>
+      </div>
+      <div id="extract-result"></div>
+
       ${
         isAlumni
           ? `<label class="checkbox">
@@ -52,6 +60,8 @@ pages.profile = async function (container) {
 
       <button type="submit" class="btn btn-primary">Save profile</button>
     </form>`;
+
+  document.getElementById("btn-extract").addEventListener("click", runSkillScan);
 
   document.getElementById("profile-form").addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -69,6 +79,69 @@ pages.profile = async function (container) {
     }
   });
 };
+
+async function runSkillScan() {
+  const form = document.getElementById("profile-form");
+  const box = document.getElementById("extract-result");
+  box.innerHTML = loading();
+
+  try {
+    const result = await api.post("/me/extract-skills", { text: form.bio.value });
+
+    if (result.found.length === 0) {
+      box.innerHTML = emptyState(
+        "No known skills found in your bio. Try naming tools and subjects directly, for example 'I work with Python and SQL'."
+      );
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="extract-result">
+        <p class="muted">
+          Found ${result.found.length} skill${result.found.length === 1 ? "" : "s"}
+          ${result.already.length ? "&middot; " + result.already.length + " already on your profile" : ""}
+        </p>
+        ${
+          result.new.length === 0
+            ? `<p class="muted">Everything found is already listed.</p>`
+            : `<div class="tags">${result.new
+                .map((s) => `<button type="button" class="chip" data-add-skill="${escapeHtml(s)}">+ ${escapeHtml(s)}</button>`)
+                .join("")}</div>
+               <button type="button" id="btn-add-all" class="btn btn-secondary btn-small">Add all</button>`
+        }
+      </div>`;
+
+    box.querySelectorAll("[data-add-skill]").forEach((button) => {
+      button.addEventListener("click", () => {
+        addSkillToField(button.dataset.addSkill);
+        button.remove();
+      });
+    });
+
+    const addAll = document.getElementById("btn-add-all");
+    if (addAll) {
+      addAll.addEventListener("click", () => {
+        result.new.forEach(addSkillToField);
+        box.innerHTML = emptyState("Added. Remember to save your profile.");
+      });
+    }
+  } catch (error) {
+    box.innerHTML = emptyState(error.message);
+  }
+}
+
+function addSkillToField(skill) {
+  const field = document.getElementById("profile-form").skills;
+  const current = field.value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  if (current.some((item) => item.toLowerCase() === skill.toLowerCase())) return;
+
+  current.push(skill);
+  field.value = current.join(", ");
+}
 
 function field(label, name, value, type) {
   return `

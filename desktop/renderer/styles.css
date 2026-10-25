@@ -1054,3 +1054,25 @@ code {
   font-size: 16px;
   padding: 0 2px;
 }
+
+.extract {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.extract-result {
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.extract-result .tags {
+  margin: 8px 0;
+}
+
+.extract-result .chip {
+  font-size: 12px;
+}

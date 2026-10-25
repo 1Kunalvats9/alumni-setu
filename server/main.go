@@ -52,6 +52,8 @@ func main() {
 	mux.HandleFunc("POST /api/notifications/read", requireAuth(handleMarkAllSeen))
 	mux.HandleFunc("DELETE /api/notifications/{id}", requireAuth(handleDeleteNotification))
 
+	mux.HandleFunc("POST /api/me/extract-skills", requireAuth(handleExtractSkills))
+
 	mux.HandleFunc("POST /api/assistant", requireAuth(handleAssistant))
 
 	admin := []string{"admin"}
