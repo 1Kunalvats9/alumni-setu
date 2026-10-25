@@ -13,3 +13,4 @@ npm-debug.log*
 
 # Build output (installers are large binaries, built with: cd desktop && npm run dist)
 desktop/dist/
+dist/

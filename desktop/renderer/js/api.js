@@ -1,4 +1,5 @@
-const API_BASE = window.alumniSetu.apiBase;
+const API_BASE =
+  (window.alumniSetu && window.alumniSetu.apiBase) || "http://localhost:8080/api";
 const TOKEN_KEY = "alumnisetu.token";
 
 const api = {

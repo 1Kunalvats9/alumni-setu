@@ -75,6 +75,11 @@ func main() {
 	mux.HandleFunc("GET /api/admin/analytics", requireRole(admin, handleAnalytics))
 	mux.HandleFunc("PATCH /api/admin/posts/{id}/approve", requireRole(admin, handleAdminClearFlag))
 
+	if webDir := os.Getenv("ALUMNISETU_WEB"); webDir != "" {
+		mux.Handle("/", http.FileServer(http.Dir(webDir)))
+		log.Println("serving the interface from", webDir)
+	}
+
 	log.Println("AlumniSetu API listening on http://" + addr)
 	if err := http.ListenAndServe(addr, withCORS(mux)); err != nil {
 		log.Fatal(err)

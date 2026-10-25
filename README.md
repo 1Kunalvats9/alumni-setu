@@ -74,7 +74,9 @@ ad_desktop_app/
 │   ├── analytics.go        # department statistics
 │   ├── helpers.go          # small JSON + request helpers
 │   └── seed.go             # demo data
-└── desktop/                # Electron app
+├── native/                 # macOS shell (Swift + WKWebView) used for the .dmg
+│   └── main.swift
+└── desktop/                # Electron shell, used for development
     ├── main.js             # creates the window, starts the server
     ├── preload.js          # exposes the API base URL safely
     └── renderer/           # the actual UI
@@ -89,14 +91,19 @@ ad_desktop_app/
 Build the installer:
 
 ```bash
-cd desktop
-npm install
-npm run dist
+./build-app.sh
 ```
 
-That produces `desktop/dist/AlumniSetu-1.0.0-universal.dmg`. Open it, drag
-**AlumniSetu** to Applications, and launch it. The Go server is bundled inside
-the app and starts automatically, so nothing else is needed.
+That produces `dist/AlumniSetu-1.0.0.dmg` — **7 MB**, universal (Apple Silicon
+and Intel). Open it, drag **AlumniSetu** to Applications, and launch it. The Go
+server is bundled inside the app and starts automatically, so nothing else is
+needed.
+
+The app is a small native macOS shell (Swift + WKWebView, 212 KB) that starts
+the Go server and points a web view at it. An Electron build of the same
+interface is also kept for development, but it is 181 MB because Electron
+ships its own copy of Chromium; the native shell uses the WebKit already in
+macOS.
 
 The build is not code-signed, so the first launch needs
 **right-click → Open** (or System Settings → Privacy & Security → Open Anyway).
@@ -121,9 +128,9 @@ npm start
 ```
 
 The server listens on `http://localhost:8080` and creates `alumnisetu.db` next
-to itself on first run. The desktop app checks whether anything is already
-answering on 8080 and only starts its own copy if not, so both options work
-without changing a line.
+to itself on first run. Both shells check whether anything is already answering
+on 8080 and only start their own copy if not, so either option works without
+changing a line.
 
 ### Demo logins
 
@@ -155,7 +162,7 @@ without changing a line.
 | Tamper-evident verification ledger (SHA-256 hash chain) | Done |
 | Department analytics dashboard | Done |
 | Electron desktop UI for all of the above | Done |
-| Packaged as a universal macOS .dmg with the server bundled in | Done |
+| Packaged as a 7 MB universal macOS .dmg with the server bundled in | Done |
 | Code signing, Windows build, language-model assistant | Not yet |
 
 Working end to end from SQL to screen.
