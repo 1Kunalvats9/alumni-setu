@@ -2,7 +2,7 @@ AlumniSetu — Alumni & Student Interaction Platform for the Technical Education
 
 ## Download
 
-**`AlumniSetu-1.0.0-universal.dmg`** — macOS, runs on both Apple Silicon and Intel Macs.
+**`AlumniSetu-1.0.0.dmg`** — 7 MB, macOS 11 or later, runs on both Apple Silicon and Intel Macs.
 
 ## Install
 
@@ -26,4 +26,4 @@ All use the password `password123`.
 
 Role-based accounts, centralized alumni directory with search and filters, explainable mentor matching, mentorship requests, events and RSVPs, discussion forum, automatic content moderation, placement board, in-app notifications, skill extraction from free-text bios, a tamper-evident verification ledger, an admin console, a department analytics dashboard, and a help assistant.
 
-Built with a Go standard-library API over SQLite and an Electron front end in plain HTML, CSS and JavaScript.
+Built with a Go standard-library API over SQLite and a native macOS shell (Swift + WKWebView) around an interface written in plain HTML, CSS and JavaScript. The whole app is 7 MB because it uses the WebKit already present in macOS rather than bundling a browser engine.
