@@ -3,12 +3,22 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 )
 
-const addr = "localhost:8080"
+const defaultAddr = "localhost:8080"
+
+func setting(name, fallback string) string {
+	if value := os.Getenv(name); value != "" {
+		return value
+	}
+	return fallback
+}
 
 func main() {
-	openDB("alumnisetu.db")
+	addr := setting("ALUMNISETU_ADDR", defaultAddr)
+
+	openDB(setting("ALUMNISETU_DB", "alumnisetu.db"))
 	seedIfEmpty()
 
 	mux := http.NewServeMux()

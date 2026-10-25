@@ -1,13 +1,67 @@
 {
-  "name": "alumnisetu-desktop",
-  "version": "0.1.0",
-  "description": "AlumniSetu desktop client for the Alumni-Student Interaction Platform",
+  "name": "alumnisetu",
+  "productName": "AlumniSetu",
+  "version": "1.0.0",
+  "description": "Alumni and Student Interaction Platform for the Technical Education Department, Govt. of Rajasthan",
+  "author": "Kunal Vats",
+  "license": "MIT",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build:server": "../build-server.sh",
+    "dist": "npm run build:server && electron-builder --mac dmg"
   },
-  "license": "MIT",
   "devDependencies": {
-    "electron": "33.2.1"
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "in.gov.rajasthan.alumnisetu",
+    "productName": "AlumniSetu",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../server/bin/alumnisetu-server",
+        "to": "server/alumnisetu-server"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.education",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "identity": null,
+      "x64ArchFiles": "Contents/Resources/server/alumnisetu-server"
+    },
+    "dmg": {
+      "title": "AlumniSetu ${version}",
+      "contents": [
+        {
+          "x": 140,
+          "y": 200,
+          "type": "file"
+        },
+        {
+          "x": 400,
+          "y": 200,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
   }
 }
