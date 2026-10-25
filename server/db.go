@@ -105,6 +105,19 @@ func createTables() {
 		created_at TEXT NOT NULL
 	);
 
+	CREATE TABLE IF NOT EXISTS ledger (
+		id           INTEGER PRIMARY KEY AUTOINCREMENT,
+		action       TEXT NOT NULL,
+		subject_id   INTEGER NOT NULL,
+		subject_name TEXT NOT NULL,
+		actor_id     INTEGER NOT NULL,
+		actor_name   TEXT NOT NULL,
+		details      TEXT NOT NULL DEFAULT '',
+		created_at   TEXT NOT NULL,
+		prev_hash    TEXT NOT NULL,
+		hash         TEXT NOT NULL
+	);
+
 	CREATE TABLE IF NOT EXISTS notifications (
 		id         INTEGER PRIMARY KEY AUTOINCREMENT,
 		user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

@@ -1,8 +1,9 @@
 pages.admin = async function (container) {
-  const [stats, pending, flagged] = await Promise.all([
+  const [stats, pending, flagged, ledger] = await Promise.all([
     api.get("/admin/stats"),
     api.get("/admin/pending"),
     api.get("/admin/flagged"),
+    api.get("/admin/ledger"),
   ]);
 
   container.innerHTML = `
@@ -44,8 +45,56 @@ pages.admin = async function (container) {
       </div>
     </div>`;
 
+  container.insertAdjacentHTML("beforeend", ledgerSection(ledger));
   wireAdminActions(container);
 };
+
+function ledgerSection(ledger) {
+  return `
+    <div class="card">
+      <h3>Verification ledger (${ledger.count})</h3>
+      <p class="muted">
+        Every verification decision is appended to a hash chain. Each record carries a
+        fingerprint of its own contents plus the previous record's fingerprint, so editing
+        or deleting history breaks the chain and shows up here.
+      </p>
+
+      <div class="chain-status ${ledger.intact ? "ok" : "broken"}">
+        ${
+          ledger.intact
+            ? "Chain intact &mdash; all " + escapeHtml(ledger.count) + " records verify"
+            : "Tampering detected at record #" + escapeHtml(ledger.broken_at) + " &mdash; " + escapeHtml(ledger.reason)
+        }
+      </div>
+
+      <div class="list spaced">
+        ${
+          ledger.count === 0
+            ? emptyState("No verification decisions recorded yet.")
+            : ledger.results.slice().reverse().map(ledgerRow).join("")
+        }
+      </div>
+    </div>`;
+}
+
+function ledgerRow(entry) {
+  const granted = entry.action === "verification_granted";
+
+  return `
+    <div class="list-item">
+      <div class="list-body">
+        <div class="event-title">
+          <strong>#${escapeHtml(entry.id)} ${escapeHtml(entry.subject_name)}</strong>
+          <span class="badge ${granted ? "badge-accepted" : "badge-rejected"}">
+            ${granted ? "verified" : "revoked"}
+          </span>
+        </div>
+        <p>${escapeHtml(entry.details)}</p>
+        <small>by ${escapeHtml(entry.actor_name)} &middot; ${escapeHtml(formatDateTime(entry.created_at))}</small>
+        <small class="hash">prev ${escapeHtml(entry.prev_hash.slice(0, 16))}… &rarr; this ${escapeHtml(entry.hash.slice(0, 16))}…</small>
+      </div>
+    </div>`;
+}
 
 function pendingRow(person) {
   const p = person.profile;

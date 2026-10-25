@@ -79,7 +79,7 @@ type verifyRequest struct {
 	Verified bool `json:"verified"`
 }
 
-func handleAdminVerify(w http.ResponseWriter, r *http.Request, _ *User) {
+func handleAdminVerify(w http.ResponseWriter, r *http.Request, actor *User) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "invalid user id")
@@ -105,6 +105,14 @@ func handleAdminVerify(w http.ResponseWriter, r *http.Request, _ *User) {
 		writeError(w, http.StatusInternalServerError, "could not update account")
 		return
 	}
+
+	action := "verification_revoked"
+	details := "Verified badge removed by the department"
+	if body.Verified {
+		action = "verification_granted"
+		details = "Degree and employment details confirmed by the department"
+	}
+	appendLedger(action, target, actor, details)
 
 	if body.Verified && !target.Verified {
 		notify(id, "verified",

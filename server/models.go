@@ -111,3 +111,16 @@ type Notification struct {
 	Seen      bool   `json:"seen"`
 	CreatedAt string `json:"created_at"`
 }
+
+type LedgerEntry struct {
+	ID          int64  `json:"id"`
+	Action      string `json:"action"`
+	SubjectID   int64  `json:"subject_id"`
+	SubjectName string `json:"subject_name"`
+	ActorID     int64  `json:"actor_id"`
+	ActorName   string `json:"actor_name"`
+	Details     string `json:"details"`
+	CreatedAt   string `json:"created_at"`
+	PrevHash    string `json:"prev_hash"`
+	Hash        string `json:"hash"`
+}

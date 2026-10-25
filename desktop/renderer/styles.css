@@ -1076,3 +1076,28 @@ code {
 .extract-result .chip {
   font-size: 12px;
 }
+
+.chain-status {
+  padding: 10px 13px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.chain-status.ok {
+  color: var(--green);
+  background: #e6f5ee;
+}
+
+.chain-status.broken {
+  color: var(--red);
+  background: #fdeceb;
+}
+
+small.hash {
+  margin-top: 4px;
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
