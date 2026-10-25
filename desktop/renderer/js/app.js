@@ -24,6 +24,9 @@ function showScreen(name) {
   document.getElementById("screen-app").classList.toggle("hidden", name !== "app");
 
   if (name === "login") {
+    document.getElementById("notif-panel").classList.add("hidden");
+    document.getElementById("bell-count").classList.add("hidden");
+    document.getElementById("notif-list").innerHTML = "";
     document.getElementById("assistant-toggle").classList.add("hidden");
     document.getElementById("assistant").classList.add("hidden");
     document.getElementById("assistant-log").innerHTML = "";
@@ -59,6 +62,8 @@ async function openPage(name) {
   } catch (error) {
     container.innerHTML = emptyState(error.message);
   }
+
+  refreshNotifications(false);
 }
 
 function renderCurrentUser() {
@@ -80,6 +85,7 @@ async function startApp() {
   renderNav();
   renderCurrentUser();
   await openPage("home");
+  await refreshNotifications(false);
 }
 
 function logout() {
@@ -94,6 +100,7 @@ async function boot() {
   setupAuthForms();
   setupModal();
   setupAssistant();
+  setupNotifications();
   document.getElementById("btn-logout").addEventListener("click", logout);
 
   if (!api.token) {
