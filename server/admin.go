@@ -106,6 +106,13 @@ func handleAdminVerify(w http.ResponseWriter, r *http.Request, _ *User) {
 		return
 	}
 
+	if body.Verified && !target.Verified {
+		notify(id, "verified",
+			"Your account has been verified",
+			"The department has confirmed your details. Your profile now shows a verified badge.",
+			"profile")
+	}
+
 	updated, _ := findUserByID(id)
 	writeJSON(w, http.StatusOK, updated)
 }

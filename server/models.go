@@ -100,3 +100,14 @@ type Job struct {
 	ApplyLink   string `json:"apply_link"`
 	CreatedAt   string `json:"created_at"`
 }
+
+type Notification struct {
+	ID        int64  `json:"id"`
+	UserID    int64  `json:"user_id"`
+	Kind      string `json:"kind"`
+	Title     string `json:"title"`
+	Body      string `json:"body"`
+	Page      string `json:"page"`
+	Seen      bool   `json:"seen"`
+	CreatedAt string `json:"created_at"`
+}

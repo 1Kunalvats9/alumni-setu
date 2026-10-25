@@ -46,6 +46,11 @@ func handleCreateMentorship(w http.ResponseWriter, r *http.Request, user *User) 
 		writeError(w, http.StatusInternalServerError, "could not load request")
 		return
 	}
+
+	notify(alumni.ID, "mentorship_request",
+		user.Name+" asked you to be their mentor",
+		mentorship.Message, "mentorships")
+
 	writeJSON(w, http.StatusCreated, mentorship)
 }
 
@@ -112,6 +117,14 @@ func handleUpdateMentorship(w http.ResponseWriter, r *http.Request, user *User) 
 	}
 
 	updated, _ := loadMentorship(id)
+
+	outcome := "accepted your mentorship request"
+	if body.Status == "rejected" {
+		outcome = "could not take up your mentorship request"
+	}
+	notify(updated.StudentID, "mentorship_answer",
+		user.Name+" "+outcome, "", "mentorships")
+
 	writeJSON(w, http.StatusOK, updated)
 }
 

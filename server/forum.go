@@ -153,6 +153,14 @@ func handleCreateComment(w http.ResponseWriter, r *http.Request, user *User) {
 		writeError(w, http.StatusInternalServerError, "could not load comment")
 		return
 	}
+
+	post, _ := loadPost(postID)
+	if post.AuthorID != user.ID {
+		notify(post.AuthorID, "reply",
+			user.Name+" replied to \""+post.Title+"\"",
+			comment.Body, "forum")
+	}
+
 	writeJSON(w, http.StatusCreated, comment)
 }
 

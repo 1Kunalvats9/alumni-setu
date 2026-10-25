@@ -56,6 +56,11 @@ func handleCreateJob(w http.ResponseWriter, r *http.Request, user *User) {
 		writeError(w, http.StatusInternalServerError, "could not load job")
 		return
 	}
+
+	notifyEveryoneExcept(user.ID, "job",
+		"New opening: "+job.Title+" at "+job.Company,
+		job.Location, "jobs")
+
 	writeJSON(w, http.StatusCreated, job)
 }
 

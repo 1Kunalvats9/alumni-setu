@@ -58,6 +58,11 @@ func handleCreateEvent(w http.ResponseWriter, r *http.Request, user *User) {
 		writeError(w, http.StatusInternalServerError, "could not load event")
 		return
 	}
+
+	notifyEveryoneExcept(user.ID, "event",
+		"New "+event.Kind+": "+event.Title,
+		prettyTime(event.StartsAt), "events")
+
 	writeJSON(w, http.StatusCreated, event)
 }
 
