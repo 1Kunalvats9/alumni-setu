@@ -300,3 +300,112 @@ cd server
 go test ./...     # 25 cases: 10 moderation, 15 assistant intents
 go vet ./...
 ```
+
+---
+
+## 9. Notifications (`notifications.go`)
+
+Two helpers do all the work: `notify()` for one person, and
+`notifyEveryoneExcept()` which inserts a row per user with a single
+`INSERT ... SELECT` rather than looping in Go. They are called from the
+handlers that already exist, so no feature had to be restructured.
+
+One detail worth knowing because it was a real bug: ordering is
+`created_at DESC, id DESC`. Timestamps are second-resolution, so several
+notifications written in the same second came back in an arbitrary order
+and the list looked oldest-first. The `id` tiebreaker fixes it.
+
+Delete is scoped in SQL — `WHERE id = ? AND user_id = ?` — so guessing
+another person's notification id does nothing.
+
+---
+
+## 10. Skill extraction (`nlp.go`)
+
+This is the NLP piece, and the accurate name for it is **gazetteer matching**:
+a dictionary of 52 canonical skills, each with aliases, compiled into one
+regular expression per skill. `golang` resolves to Go, `k8s` to Kubernetes,
+`deep learning` to Machine Learning.
+
+The whole difficulty is word boundaries, and the tests are the specification:
+
+| Input | Must | Must not |
+| --- | --- | --- |
+| `I had to google the algorithm` | | yield Go |
+| `We kept the code pythonic` | | yield Python |
+| `Competitive programming in C++.` | yield C++ | also yield bare C |
+| `Stack: React, Node.js, SQL.` | yield all three | |
+
+The boundary is asymmetric, which is the non-obvious part. On the left we
+exclude `.` so `js` inside `Node.js` is not read as JavaScript. On the right
+we must **not** exclude `.`, because a skill at the end of a sentence is
+followed by a full stop. The first version excluded it on both sides and
+silently missed every skill that ended a sentence.
+
+---
+
+## 11. The verification ledger (`ledger.go`)
+
+The problem statement says "blockchain or any authenticated technique". This
+is the data structure underneath a blockchain — a SHA-256 hash chain —
+without the network, the consensus or the distribution, none of which would
+do anything useful for a single department database. Call it a hash chain.
+
+Each record stores a fingerprint of its own contents **plus the previous
+record's fingerprint**. `auditLedger()` walks the chain and recomputes
+everything. That makes three attacks visible:
+
+| Attack | How it shows up |
+| --- | --- |
+| Edit a record | its stored fingerprint no longer matches its contents |
+| Edit it *and* recompute its fingerprint | the next record's `prev_hash` no longer matches |
+| Delete a record | the chain jumps and the link breaks |
+
+**This is the best thing to demo live.** Open the Admin Console, show
+"Chain intact". Then, in a terminal:
+
+```bash
+sqlite3 ~/Library/Application\ Support/AlumniSetu/alumnisetu.db \
+  "UPDATE ledger SET details = 'forged approval' WHERE id = 2;"
+```
+
+Restart and reload: the console reads "Tampering detected at record #2".
+
+Be ready for the honest limitation: the server operator could rewrite the
+whole chain from a given point. Defending against that needs the hashes
+anchored somewhere outside the server, which is on the roadmap and is
+exactly what a real blockchain buys you.
+
+---
+
+## 12. Analytics (`analytics.go` and `pages/analytics.js`)
+
+Eight breakdowns, each a `SELECT ... GROUP BY` returning label/value pairs.
+
+The chart choice is worth being able to defend. Every one of these counts a
+single thing, so the form is a ranked horizontal bar with a zero baseline,
+**one hue for every bar**, and no legend — the title already names the
+series. Shading bars darker-where-bigger is a common instinct and is wrong:
+it encodes bar length twice and spends the only free channel on information
+the length already carries.
+
+A CSP detail caught by screenshotting rather than by assertions: the page
+sets `style-src 'self'`, which blocks `style="width: 40%"` in HTML. DOM
+tests passed while every bar rendered at zero width. Widths are therefore
+set with `element.style.width`, which CSP does not restrict.
+
+---
+
+## 13. Packaging
+
+`npm run dist` runs `build-server.sh` (cross-compiles the Go server for both
+architectures and `lipo`s them into one universal binary) and then
+electron-builder.
+
+Two things make the bundle actually work:
+
+1. **The app bundle is read-only.** The server takes its database path from
+   `ALUMNISETU_DB`, and `main.js` points it at `app.getPath("userData")`.
+2. **`main.js` health-checks port 8080 before spawning.** If you are running
+   from source with `go run .`, the packaged app will not start a second
+   copy, and development is unchanged.

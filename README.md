@@ -68,6 +68,10 @@ ad_desktop_app/
 │   ├── moderation.go       # harmful-content filter
 │   ├── admin.go            # verification, moderation queue, stats
 │   ├── assistant.go        # help assistant
+│   ├── notifications.go    # in-app notifications
+│   ├── nlp.go              # skill extraction from bio text
+│   ├── ledger.go           # tamper-evident verification chain
+│   ├── analytics.go        # department statistics
 │   ├── helpers.go          # small JSON + request helpers
 │   └── seed.go             # demo data
 └── desktop/                # Electron app
@@ -80,23 +84,46 @@ ad_desktop_app/
 
 ## Running it
 
-### 1. Start the API server
+### Option A: install the app
+
+Build the installer:
+
+```bash
+cd desktop
+npm install
+npm run dist
+```
+
+That produces `desktop/dist/AlumniSetu-1.0.0-universal.dmg`. Open it, drag
+**AlumniSetu** to Applications, and launch it. The Go server is bundled inside
+the app and starts automatically, so nothing else is needed.
+
+The build is not code-signed, so the first launch needs
+**right-click → Open** (or System Settings → Privacy & Security → Open Anyway).
+
+The database lives at
+`~/Library/Application Support/AlumniSetu/alumnisetu.db`. Delete that file to
+start over with fresh demo data.
+
+### Option B: run from source
+
+Two terminals.
 
 ```bash
 cd server
 go run .
 ```
 
-Server listens on `http://localhost:8080`. On first run it creates `alumnisetu.db`
-and seeds demo accounts.
-
-### 2. Start the desktop app
-
 ```bash
 cd desktop
 npm install
 npm start
 ```
+
+The server listens on `http://localhost:8080` and creates `alumnisetu.db` next
+to itself on first run. The desktop app checks whether anything is already
+answering on 8080 and only starts its own copy if not, so both options work
+without changing a line.
 
 ### Demo logins
 
@@ -123,8 +150,13 @@ npm start
 | Placement board for alumni-posted jobs and internships | Done |
 | Admin console: alumni verification, flagged-content review, engagement stats | Done |
 | Help assistant for FAQs and navigating the app | Done |
+| In-app notifications across every feature | Done |
+| Skill extraction from a free-text bio | Done |
+| Tamper-evident verification ledger (SHA-256 hash chain) | Done |
+| Department analytics dashboard | Done |
 | Electron desktop UI for all of the above | Done |
-| NLP skill extraction, language-model assistant, blockchain verification | Not yet |
+| Packaged as a universal macOS .dmg with the server bundled in | Done |
+| Code signing, Windows build, language-model assistant | Not yet |
 
 Working end to end from SQL to screen.
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the rest.

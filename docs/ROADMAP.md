@@ -20,12 +20,18 @@
 - [x] Admin console: alumni verification and flagged-content review
 - [x] Department engagement statistics
 - [x] Help assistant for FAQs and navigation
+- [x] In-app notifications across every feature
+- [x] Skill extraction from free-text bios
+- [x] Tamper-evident verification ledger (hash chain)
+- [x] Department analytics dashboard
+- [x] Packaged as a macOS .dmg with the server bundled in
 
 ## Next
 
+- [ ] Code-sign and notarise the installer with an Apple Developer ID
+- [ ] Windows .exe and Linux .AppImage builds
 - [ ] Swap the assistant's keyword retrieval for a language model
-- [ ] NLP-based skill extraction from free-text bios
-- [ ] Email / in-app notifications
-- [ ] Blockchain-backed credential verification
-- [ ] Analytics dashboard for the department
-- [ ] Packaging into a signed .dmg / .exe installer
+- [ ] Email notifications in addition to in-app
+- [ ] Anchor the ledger externally so the server operator cannot rewrite it
+- [ ] Direct messaging between a mentor and mentee
+- [ ] Resume upload and review workflow

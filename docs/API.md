@@ -181,3 +181,40 @@ Every route below is restricted to the `admin` role and returns `403` otherwise.
 
 Admin accounts cannot be created through `/register`; they exist only in the
 seed data.
+
+---
+
+## Notifications
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/notifications` | Last 50, newest first, with an `unseen` count |
+| POST | `/notifications/read` | Marks all of yours as read |
+| DELETE | `/notifications/{id}` | Scoped by user_id, so you can only remove your own |
+
+Written automatically on: a mentorship request, a mentor's answer, a new job
+or session (broadcast to everyone else), a reply to your thread, and an
+account being verified.
+
+---
+
+## Skill extraction
+
+| Method | Path | Body | Notes |
+| --- | --- | --- | --- |
+| POST | `/me/extract-skills` | `text` | Falls back to your saved bio if `text` is empty |
+
+Returns `found`, `new` (not yet on your profile) and `already`. Dictionary
+matching over 52 canonical skills and their aliases, so `golang` returns
+`Go` and `k8s` returns `Kubernetes`.
+
+---
+
+## Verification ledger and analytics
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/admin/ledger` | Hash-chain records plus `intact`, `broken_at`, `reason` |
+| GET | `/admin/analytics` | Eight label/value breakdowns for the dashboard |
+
+Both are admin-only.
